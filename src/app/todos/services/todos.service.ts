@@ -1,14 +1,26 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { firebaseCollections } from 'src/app/core/enums/firebase-collections.enum';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TodosService {
+
+  priorityFilter$: BehaviorSubject<string|null>;
+  completedFilter$: BehaviorSubject<boolean|null>;
+  sorting$: BehaviorSubject<string|null>;
+
   private todosCollection: AngularFirestoreCollection<any>;
 
   constructor(private firestore: AngularFirestore) {
+
+    this.priorityFilter$ = new BehaviorSubject(null);
+    this.completedFilter$ = new BehaviorSubject(null);
+    this.sorting$ = new BehaviorSubject(null);
+
     this.todosCollection = this.firestore
       .collection(firebaseCollections.todos);
   }
@@ -25,25 +37,25 @@ export class TodosService {
     return this.todosCollection.valueChanges({ idField: 'id'});
   }
 
-  getByFilters(filters, sorting: string = '') {
-    console.log(filters);
-    console.log(sorting);
-    this.todosCollection = this.firestore.collection<any>(firebaseCollections.todos, ref => {
-      let query = ref;
-
-      if(sorting.length > 0)
-        query.orderBy(sorting);
-
-      if(filters.priority?.length > 0)
-        query.where('priority', '==', filters.priority);
-
-      if(filters.completed)
-        query.where('completed', '==', filters.completed);
-
-      return query
-    });
-
-    return this.todosCollection.valueChanges({ idField: 'id'})
+  getByFilters(filters, sorting: string = undefined) {
+    this.priorityFilter$.next(filters.priority);
+    this.completedFilter$.next(filters.completed);
+    this.sorting$.next(sorting);
+    return combineLatest(
+      this.priorityFilter$,
+      this.completedFilter$,
+      this.sorting$
+    ).pipe(
+      switchMap(([priority, completed, sorting]) =>
+        this.firestore.collection('todos', ref => {
+          let query : firebase.default.firestore.CollectionReference | firebase.default.firestore.Query = ref;
+          if (priority) { query = query.where('priority', '==', priority) };
+          if (completed) { query = query.where('completed', '==', completed) };
+          if (sorting) { query = query.orderBy(sorting) };
+          return query;
+        }).valueChanges()
+      )
+    );
   }
 
   update(todo: any) {
