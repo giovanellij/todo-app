@@ -17,9 +17,48 @@
     <ion-title>
       TODOS
     </ion-title>
-    <ion-chip (click)="create()">
-      <ion-icon name="add" color="dark"></ion-icon>
-      <ion-label>ADD TASK</ion-label>
-    </ion-chip>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-chip (click)="create()" color="primary">
+            <ion-icon name="add" color="dark"></ion-icon>
+            <ion-label>ADD TASK</ion-label>
+          </ion-chip>
+        </ion-col>
+        <ion-col class="ion-align-self-end">
+          <ion-chip color="primary" (click)="setFilters()">
+            <ion-icon name="filter-outline" color="dark"></ion-icon>
+            <ion-label>FILTERS</ion-label>
+          </ion-chip>
+          <ion-chip color="primary">
+            <ion-icon name="funnel-outline" color="dark"></ion-icon>
+            <ion-label>SORT BY</ion-label>
+            <ion-select [(ngModel)]="this.sorting" (ionChange)="refresh()">
+              <ion-select-option value="date">Date</ion-select-option>
+            </ion-select>
+          </ion-chip>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-grid class="ion-margin">
+          <ion-row>
+            <ion-col></ion-col>
+            <ion-col>Title</ion-col>
+            <ion-col>Priority</ion-col>
+            <ion-col>Due Date</ion-col>
+          </ion-row>
+          <ion-row *ngFor="let todo of (dataSource | async); index as i">
+            <ion-col><ion-checkbox color="primary" [checked]="todo.completed" (ionChange)="markAsCompleted($event, todo)"></ion-checkbox></ion-col>
+            <ion-col (click)="update(todo)">{{ todo?.title }}</ion-col>
+            <ion-col>
+              <ion-chip [color]="getPriorityColor(todo.priority)">
+                <ion-label>{{ todo?.priority }}</ion-label>
+              </ion-chip>
+            </ion-col>
+            <ion-col>{{ todo?.date.seconds * 1000 | date:'longDate' }}</ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-row>
+    </ion-grid>
   </div>
 </ion-content>

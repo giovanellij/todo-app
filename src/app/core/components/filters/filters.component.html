@@ -1,0 +1,28 @@
+<ion-content>
+  <ion-grid>
+    <ion-row justify-content-center>
+      <ion-col>
+        <ion-title>FILTERS</ion-title>
+      </ion-col>
+    </ion-row>
+    <ion-row justify-content-center>
+      <ion-col>
+        <app-priority-selector [initial]="this.filters.priority" (selectedPriority)="onSelectionChange($event)"></app-priority-selector>
+      </ion-col>
+    </ion-row>
+    <ion-row justify-content-center>
+      <ion-col>
+        <ion-item>
+          <ion-label>Completed</ion-label>
+          <ion-toggle color="primary" [(ngModel)]="this.filters.completed"></ion-toggle>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row justify-content-center>
+      <ion-col>
+        <ion-button color="danger" (click)="this.clearFilters()">Clear</ion-button>
+        <ion-button color="light" (click)="this.applyFilters()">Apply</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

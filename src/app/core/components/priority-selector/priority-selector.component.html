@@ -1,0 +1,8 @@
+<ion-item>
+  <ion-label>Priority</ion-label>
+  <ion-select placeholder="Select One" [(ngModel)]="this.selected" (ionChange)="this.onSelected()">
+    <ion-select-option value="Low">Low</ion-select-option>
+    <ion-select-option value="Medium">Medium</ion-select-option>
+    <ion-select-option value="High">High</ion-select-option>
+  </ion-select>
+</ion-item>

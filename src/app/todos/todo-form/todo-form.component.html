@@ -1,3 +1,54 @@
-<p>
-  todo-form works!
-</p>
+<ion-content>
+  <form name="form" [formGroup]="form">
+    <ion-grid>
+      <ion-row justify-content-center>
+        <ion-col>
+          <ion-title>TODO</ion-title>
+        </ion-col>
+      </ion-row>
+      <ion-row justify-content-center>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">Title</ion-label>
+            <ion-input type="text" name="title" formControlName="title"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row justify-content-center>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">Description</ion-label>
+            <ion-input type="text" name="description" formControlName="description"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row justify-content-center>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">Due Date</ion-label>
+            <ion-input type="date" name="date" formControlName="date"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row justify-content-center>
+        <ion-col>
+          <app-priority-selector [initial]="this.todo?.priority" (selectedPriority)="onSelectionChange($event)"></app-priority-selector>
+        </ion-col>
+      </ion-row>
+      <ion-row justify-content-center *ngIf="this.todo">
+        <ion-col>
+          <ion-item>
+            <ion-label>Completed</ion-label>
+            <ion-checkbox name="completed" formControlName="completed"></ion-checkbox>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row justify-content-center>
+        <ion-col>
+          <ion-button color="danger" (click)="remove()" *ngIf="this.todo">Delete</ion-button>
+          <ion-button color="light" (click)="save()" [disabled]="this.form.invalid">Save</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>
